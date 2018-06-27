@@ -11,6 +11,7 @@ class Navigation extends \Menu\Navigation {
     
     public function setDatabaseObject(Database $db) {
         $this->db = $db;
+        return $this;
     }
     
     public function setNavigationTable($table){
