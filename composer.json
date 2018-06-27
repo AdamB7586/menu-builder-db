@@ -1,0 +1,29 @@
+{
+    "name": "adamb/menu-builder-db",
+    "description": "Creates a navigation menu from a database",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Binnersley",
+            "email": "abinnersley@gmail.com"
+        }
+    ],
+    "require": {
+        "adamb/menu-builder": "^1.0",
+        "adamb/database": "^1.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "DBMenu\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DBMenu\\Tests\\": "tests/"
+        }
+    }
+}
