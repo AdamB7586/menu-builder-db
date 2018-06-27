@@ -41,7 +41,7 @@ class Navigation extends \Menu\Navigation {
         $items = $this->db->selectAll($this->getNavigationTable(), ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL')], '*', ['link_order' => 'ASC']);
         if(is_array($items)){
             foreach($items as $i => $link){
-                $items[$i]['childen'] = $this->buildNavArray($link['link_id']);
+                $items[$i]['children'] = $this->buildNavArray($link['link_id']);
             }
             return $items;
         }
