@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS `menu_items` (
-  `link_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `page_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` varchar(100) DEFAULT NULL,
   `uri` varchar(150) DEFAULT NULL,
   `fragment` varchar(50) DEFAULT NULL,

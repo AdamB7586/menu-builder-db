@@ -30,7 +30,7 @@ class Navigation extends \Menu\Navigation {
     }
     
     public function editNavItem($linkID) {
-        return $this->db->update($this->getNavigationTable(), [], ['link_id' => $linkID], 1);
+        return $this->db->update($this->getNavigationTable(), [], ['page_id' => $linkID], 1);
     }
     
     public function deleteNavItem() {
@@ -41,7 +41,7 @@ class Navigation extends \Menu\Navigation {
         $items = $this->db->selectAll($this->getNavigationTable(), ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL')], '*', ['link_order' => 'ASC']);
         if(is_array($items)){
             foreach($items as $i => $link){
-                $items[$i]['children'] = $this->buildNavArray($link['link_id']);
+                $items[$i]['children'] = $this->buildNavArray($link['page_id']);
             }
             return $items;
         }
