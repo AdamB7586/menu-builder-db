@@ -3,11 +3,14 @@
 namespace DBMenu;
 
 use DBAL\Database;
+use Configuration\Config;
 use Menu\Helpers\Validate;
 
 class Navigation extends \Menu\Navigation {
     
     protected $db;
+    protected $config;
+    
     protected $nav_table = 'menu_items';
     
     /**
@@ -17,6 +20,17 @@ class Navigation extends \Menu\Navigation {
      */
     public function setDatabaseObject(Database $db) {
         $this->db = $db;
+        return $this;
+    }
+    
+    /**
+     * Sets the config object so it can be called from the current class
+     * @param Config $config This should be an instance of the config class
+     * @return $this
+     */
+    public function setConfigObject(Config $config) {
+        $this->config = $config;
+        $this->setNavigationTable($config->nav_table);
         return $this;
     }
     
