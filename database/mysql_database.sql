@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS `menu_items` (
   `li_id` varchar(30) DEFAULT NULL,
   `ul_class` varchar(50) DEFAULT NULL,
   `ul_id` varchar(30) DEFAULT NULL,
+  `run_class` varchar(100) DEFAULT NULL,
+  `run_function` varchar(50) DEFAULT NULL,
   `active` tinyint(3) UNSIGNED NOT NULL DEFAULT '1',
   PRIMARY KEY (`link_id`),
   UNIQUE KEY `uri` (`uri`),
