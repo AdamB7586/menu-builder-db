@@ -86,7 +86,7 @@ class Navigation extends \Menu\Navigation {
         if(is_array($items)){
             foreach($items as $i => $link){
                 if($link['run_class'] !== NULL){
-                    $class = new $link['run_class']();
+                    $class = new $link['run_class']($this->db);
                     $items[$i]['children'] = $class->{$link['run_function']}($currentURL);
                 }
                 elseif($link['run_function'] !== NULL){
