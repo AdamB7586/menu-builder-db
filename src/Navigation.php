@@ -93,10 +93,11 @@ class Navigation extends \Menu\Navigation {
      * Will build a navigation array
      * @param string This should be the current URL
      * @param int|false $linkID If the array should be a sub array item set as the page id else set as false
+     * @param array $additional Any additional SQL parameters should be added as an array
      * @return array|boolean If any items exist will return the navigation array else returns false if no items exist
      */
-    public function buildNavArray($currentURL, $linkID = false){
-        $items = $this->db->selectAll($this->getNavigationTable(), ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL'), 'active' => 1], ['page_id', 'label', 'uri', 'fragment', 'target', 'rel', 'class', 'id', 'link_order', 'sub_page_of', 'li_class', 'li_id', 'ul_class', 'ul_id', 'run_class', 'run_function'], ['link_order' => 'ASC']);
+    public function buildNavArray($currentURL, $linkID = false, $additional = []){
+        $items = $this->db->selectAll($this->getNavigationTable(), array_merge($additional, ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL'), 'active' => 1]), ['page_id', 'label', 'uri', 'fragment', 'target', 'rel', 'class', 'id', 'link_order', 'sub_page_of', 'li_class', 'li_id', 'ul_class', 'ul_id', 'run_class', 'run_function'], ['link_order' => 'ASC']);
         if(is_array($items)){
             foreach($items as $i => $link){
                 if($link['run_class'] !== NULL){
