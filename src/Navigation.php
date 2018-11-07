@@ -108,7 +108,7 @@ class Navigation extends \Menu\Navigation {
                     $items[$i]['children'] = $link['run_function']($currentURL);
                 }
                 else{
-                    $items[$i]['children'] = $this->buildNavArray($currentURL, $link['page_id']);
+                    $items[$i]['children'] = $this->buildNavArray($currentURL, $link['page_id'], $additional);
                 }
             }
             return $items;
