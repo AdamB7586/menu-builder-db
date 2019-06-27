@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS `config` (
+  `setting` varchar(100) NOT NULL,
+  `value` text NOT NULL,
+  PRIMARY KEY (`setting`),
+  UNIQUE KEY `setting` (`setting`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE TABLE IF NOT EXISTS `menu_items` (
   `page_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `label` varchar(100) DEFAULT NULL,
