@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `menu_items` (
   `run_class` varchar(100) DEFAULT NULL,
   `run_function` varchar(50) DEFAULT NULL,
   `active` tinyint(3) UNSIGNED NOT NULL DEFAULT '1',
-  PRIMARY KEY (`link_id`),
+  PRIMARY KEY (`page_id`),
   UNIQUE KEY `uri` (`uri`),
   KEY `subof` (`sub_page_of`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -32,4 +32,4 @@ CREATE TABLE IF NOT EXISTS `menu_items` (
 -- Constraints
 --
 ALTER TABLE `menu_items`
-  ADD CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`sub_page_of`) REFERENCES `menu_items` (`link_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `menu_items_ibfk_1` FOREIGN KEY (`sub_page_of`) REFERENCES `menu_items` (`page_id`) ON DELETE SET NULL ON UPDATE CASCADE;
