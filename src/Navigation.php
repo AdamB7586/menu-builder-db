@@ -136,6 +136,7 @@ class Navigation extends \Menu\Navigation {
      * @param string This should be the current URL
      * @param int|false $linkID If the array should be a sub array item set as the page id else set as false
      * @param array $additional Any additional SQL parameters should be added as an array
+     * @param string $filename The filename for the navigation array cache file
      * @return array|boolean If any items exist will return the navigation array else returns false if no items exist
      */
     public function buildNavArray($currentURL, $linkID = false, $additional = [], $filename = 'navArrayCache'){
