@@ -11,6 +11,10 @@ class Navigation extends \Menu\Navigation {
     protected $db;
     protected $config;
     
+    public $cachePath;
+    public $cacheNav = false;
+    
+    protected $items = false;
     protected $nav_table = 'menu_items';
     
     /**
@@ -31,6 +35,44 @@ class Navigation extends \Menu\Navigation {
     public function setConfigObject(Config $config) {
         $this->config = $config;
         $this->setNavigationTable($config->nav_table);
+        return $this;
+    }
+    
+    /**
+     * Get the cache setting
+     * @return boolean
+     */
+    public function getCacheSetting() {
+        return $this->cacheNav;
+    }
+    
+    /**
+     * Set the cache setting
+     * @param boolean $cache
+     * @return $this
+     */
+    public function setCacheSetting($cache = true) {
+        $this->cacheNav = boolval($cache);
+        return $this;
+    }
+    
+    /**
+     * Get the set cache path
+     * @return string
+     */
+    public function getCachePath() {
+        return $this->cachePath;
+    }
+    
+    /**
+     * Sets the caching path
+     * @param string $path The path to the caching directory
+     * @return $this
+     */
+    public function setCachePath($path) {
+        if(is_string($path)){
+            $this->cachePath = $path;
+        }
         return $this;
     }
     
@@ -96,24 +138,29 @@ class Navigation extends \Menu\Navigation {
      * @param array $additional Any additional SQL parameters should be added as an array
      * @return array|boolean If any items exist will return the navigation array else returns false if no items exist
      */
-    public function buildNavArray($currentURL, $linkID = false, $additional = []){
-        $items = $this->db->selectAll($this->getNavigationTable(), array_merge($additional, ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL'), 'active' => 1]), ['page_id', 'label', 'uri', 'fragment', 'target', 'rel', 'class', 'id', 'link_order', 'sub_page_of', 'li_class', 'li_id', 'ul_class', 'ul_id', 'run_class', 'run_function'], ['link_order' => 'ASC']);
-        if(is_array($items)){
-            foreach($items as $i => $link){
-                if($link['run_class'] !== NULL){
-                    $class = new $link['run_class']($this->db, $this->config);
-                    $items[$i]['children'] = $class->{$link['run_function']}($currentURL);
+    public function buildNavArray($currentURL, $linkID = false, $additional = [], $filename = 'navArrayCache'){
+        $this->getFromCache($filename);
+        if(!is_array($this->items)){
+            $this->items = $this->db->selectAll($this->getNavigationTable(), array_merge($additional, ['sub_page_of' => (is_numeric($linkID) ? $linkID :'IS NULL'), 'active' => 1]), ['page_id', 'label', 'uri', 'fragment', 'target', 'rel', 'class', 'id', 'link_order', 'sub_page_of', 'li_class', 'li_id', 'ul_class', 'ul_id', 'run_class', 'run_function'], ['link_order' => 'ASC']);
+            if(is_array($this->items)){
+                foreach($this->items as $i => $link){
+                    if($link['run_class'] !== NULL){
+                        $class = new $link['run_class']($this->db, $this->config);
+                        $this->items[$i]['children'] = $class->{$link['run_function']}($currentURL);
+                    }
+                    elseif($link['run_function'] !== NULL){
+                        $this->items[$i]['children'] = $link['run_function']($currentURL);
+                    }
+                    else{
+                        $this->items[$i]['children'] = $this->buildNavArray($currentURL, $link['page_id'], $additional);
+                    }
                 }
-                elseif($link['run_function'] !== NULL){
-                    $items[$i]['children'] = $link['run_function']($currentURL);
-                }
-                else{
-                    $items[$i]['children'] = $this->buildNavArray($currentURL, $link['page_id'], $additional);
-                }
+                $this->saveToCache($filename);
+                return $this->items;
             }
-            return $items;
+            return false;
         }
-        return false;
+        return $this->items;
     }
     
     /**
@@ -125,4 +172,29 @@ class Navigation extends \Menu\Navigation {
         return ($this->db->count($this->getNavigationTable(), ['sub_page_of' => $subOf]) + 1);
     }
 
+    
+    
+    /**
+     * Save the navigation array to a file within the cache directory
+     * @param string $filename The filename of the cache file
+     */
+    private function saveToCache($filename){
+        if(!file_exists($this->getCachePath().$filename) && !empty($this->getCachePath()) && $this->getCacheSetting() === true){
+            $data = "<?php\n\n
+\$this->items = ".var_export($this->items, true).";\n";
+            @file_put_contents(CACHE_PATH.$filename, $data);
+        }
+    }
+    
+    /**
+     * Get the navigation array form the cache file if it exists
+     * @param string $filename The filename of the cache file
+     * @return boolean If the file doesn't exist or is navigation array has already been set will return false else nothing is returned
+     */
+    private function getFromCache($filename){
+        if(file_exists($this->getCachePath().$filename) && empty($this->items) && $this->getCacheSetting() === true){
+            include_once($this->getCachePath().$filename);
+        }
+        return false;
+    }
 }
